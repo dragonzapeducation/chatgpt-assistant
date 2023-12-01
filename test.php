@@ -2,6 +2,7 @@
 require "vendor/autoload.php";
 use Dragonzap\OpenAI\ChatGPT\APIConfiguration;
 use Dragonzap\OpenAI\ChatGPT\Assistant;
+use Dragonzap\OpenAI\ChatGPT\RunState;
 
 class JessicaAssistant extends Assistant
 {
@@ -10,10 +11,10 @@ class JessicaAssistant extends Assistant
     {
         parent::__construct($api_config);
     }
-    
+
     public function getAssistantId(): string
     {
-        return 'asst_jpXoAmpECT1IJumoV1Uwvddx';
+        return 'asst_0q46BUiesPu5XStGHufJVCba';
     }
 
     public function handleFunction(string $function): string
@@ -24,7 +25,16 @@ class JessicaAssistant extends Assistant
 }
 
 $assistant = new JessicaAssistant(new APIConfiguration('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'));
-$chat = $assistant->newChat();
-$chat->sendMessage('How much money did we make today?');
-$chat->awaitReply();
+$conversation = $assistant->newConversation();
+
+while(1)
+{
+    $input_message = fgets(STDIN);
+    echo 'User:' . $input_message . "\n";
+    $conversation->sendMessage($input_message);
+    $conversation->blockUntilResponded();
+    
+    echo 'Assistant: ' . $conversation->getResponse() . "\n";
+    
+}
 

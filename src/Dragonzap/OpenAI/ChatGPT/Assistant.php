@@ -12,8 +12,8 @@ use Exception;
  */
 abstract class Assistant
 {
-    protected $api_config;
-    protected $client;
+    protected APIConfiguration $api_config;
+    protected OpenAI\Client $client;
     public function __construct(APIConfiguration $api_config=NULL)
     {
         $this->api_config = $api_config;
@@ -27,6 +27,23 @@ abstract class Assistant
 
         $this->client = OpenAI::client($this->api_config->getApiKey());
     }
+
+    public function getApiConfiguration() : APIConfiguration
+    {
+        return $this->api_config;
+    }
+
+    public function getOpenAIClient() : OpenAI\Client
+    {
+        return $this->client;
+    }
+
+    public function newConversation() : Conversation
+    {
+        $response = $this->client->threads()->create([]);
+        return new Conversation($this, $response);
+    }
+
     /**
      * 
      * The creator of an assistant should return the assistant ID here, generally this would be returned directly unless you plan
@@ -34,20 +51,6 @@ abstract class Assistant
      * @return string Returns the assistant ID for the assistant
      */
     public abstract function getAssistantId(): string;
-
-    public function newChat()
-    {
-        $response = $this->client->threads()->create([]);
-        print_r($response->toArray());
-    }
-    /**
-     * Sends a message to the assistant
-     * @param string $message The message to send to this assistant
-     */
-    public function sendMessage(string $message): void
-    {
-
-    }
 
     /**
      * Handles a specific function required by the assistant.
