@@ -2,7 +2,7 @@
     "name": "dragonzap/openai-chatgpt-assistant",
     "description": "Provides clean abstraction for the chatgpt assistant API. Build and run assistants with a clean easy to use design",
     "type": "library",
-    "license": "GPLv2",
+    "license": "GPL-2.0-or-later",
     "autoload": {
         "psr-4": {
             "Dragonzap\\": "src/Dragonzap/"
