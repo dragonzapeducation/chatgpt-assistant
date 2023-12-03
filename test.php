@@ -17,9 +17,50 @@ class JessicaAssistant extends Assistant
         return 'asst_0q46BUiesPu5XStGHufJVCba';
     }
 
-    public function handleFunction(string $function): string
+    private function handleGetWeatherFunction(array $arguments)
     {
-        return '{"success":false, "message":"No functions are allowed"}';
+        $success = false;
+        $message = 'We could not locate the weather for ' . $arguments['location'] . ' as it is not in our database';
+
+        switch(strtolower($arguments['location']))
+        {
+            case 'cardiff':
+                $success = true;
+                $message = 'The weather in wales, cardiff is Rainy today';
+            break;
+
+            case 'london':
+                $success = false;
+                $message = 'As usual england is freezing';
+            break;
+
+            case 'perth':
+                $success = false;
+                $message = 'Australia, Perth is very hot at 45 Celcius everyone is cooking';
+            break;
+        }
+        return [
+            'success' => $success,
+            'message' => $message,
+        ];
+    }
+    public function handleFunction(string $function, array $arguments): string|array
+    {
+        $response = [];
+
+        switch($function)
+        {
+            case 'get_weather':
+                $response = $this->handleGetWeatherFunction($arguments);
+                break;
+
+            default:
+                $response = [
+                    'success' => false,
+                    'message' => 'Unknown function'
+                ];
+        }
+        return $response;
     }
 
 }

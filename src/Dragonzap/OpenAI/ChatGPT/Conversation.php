@@ -3,6 +3,7 @@
 namespace Dragonzap\OpenAI\ChatGPT;
 
 use Dragonzap\OpenAI\ChatGPT\Exceptions\IncompleteRunException;
+use Dragonzap\OpenAI\ChatGPT\Exceptions\UnsupportedRunException;
 use OpenAI;
 use OpenAI\Responses\Threads\Runs\ThreadRunResponse;
 use OpenAI\Responses\Threads\ThreadResponse;
@@ -18,10 +19,10 @@ enum RunState: string
     case RUNNING = 'running';
     case COMPLETED = 'completed';
 
-    // INVOKING_ACTION is returned when chatgpt wants to call a function defined in your assistant.
+    // INVOKING_FUNCTION is returned when chatgpt wants to call a function defined in your assistant.
     // We set this when we are aware and will attempt to invoke this action on your behalf.
     // You do not have to do anything with this.
-    case INVOKING_ACTION = 'invoking_action';
+    case INVOKING_FUNCTION = 'invoking_function';
     case FAILED = 'failed';
 
     case UNKNOWN = 'unknown';
@@ -89,8 +90,8 @@ class Conversation
                 break;
 
             case 'requires_action':
-                // We will automatically invoke the action later, so mark it as invoking action
-                $run_state = RunState::INVOKING_ACTION;
+                // We will automatically invoke the function later, so mark it as invoking function
+                $run_state = RunState::INVOKING_FUNCTION;
                 break;
 
             case 'failed':
@@ -134,6 +135,42 @@ class Conversation
         return $run_state;
     }
 
+    private function handleRequiresAction()
+    {
+        // We dont support action types that are not of submit_tool_outputs
+        if ($this->current_run->requiredAction->type != 'submit_tool_outputs') {
+            throw new UnsupportedRunException('The library does not yet handle action types of ' . $this->current_run->requiredAction->type);
+        }
+
+        $action_function_tool_calls = $this->current_run->requiredAction->submitToolOutputs->toolCalls;
+        $tool_outputs = [];
+
+        foreach ($action_function_tool_calls as $action_function_tool_call) {
+            if ($action_function_tool_call->type != 'function') {
+                throw new UnsupportedRunException('The library does not yet handle functions that are not of type function');
+            }
+            $tool_call_id = $action_function_tool_call->id;
+            $function_name = $action_function_tool_call->function->name;
+            $function_arguments = json_decode($action_function_tool_call->function->arguments, true);
+            $function_response = $this->assistant->handleFunction($function_name, $function_arguments);
+            if (is_array($function_response)) {
+                // By default we JSON encode for arrays and paass back only strings.
+                $function_response = json_encode($function_response);
+            }
+
+            $tool_outputs[] = ['tool_call_id' => $tool_call_id,  'output' => $function_response];
+        }
+
+        // Now we have called the function and got a response lets pass it back to chatgpt
+        $this->current_run = $this->assistant->getOpenAIClient()->threads()->runs()->submitToolOutputs(
+            threadId: $this->thread->id,
+            runId: $this->current_run->id,
+            parameters: [
+                'tool_outputs' => $tool_outputs,
+            ]
+        );
+
+    }
     public function getRunState(): RunState
     {
         if (!$this->current_run) {
@@ -145,6 +182,10 @@ class Conversation
             runId: $this->current_run->id,
         );
 
+
+        if ($this->current_run->status == 'requires_action') {
+            $this->handleRequiresAction();
+        }
 
         return $this->getRunStateFromOpenAIRunState($this->current_run->status);
     }

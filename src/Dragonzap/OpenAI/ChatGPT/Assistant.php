@@ -56,9 +56,10 @@ abstract class Assistant
      * Handles a specific function required by the assistant.
      * 
      * @param string $function The name of the function to handle.
-     * @return string The result or response of the handled function.
+     * @param array $arguments An array of arguments passed for the function
+     * @return string|array The result or response of the handled function either as a string or an array
      */
-    public abstract function handleFunction(string $function): string;
+    public abstract function handleFunction(string $function, array $arguments): string|array;
 
 
  
