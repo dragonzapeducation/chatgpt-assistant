@@ -12,14 +12,14 @@ use Exception;
  */
 abstract class Assistant
 {
-    protected APIConfiguration $api_config;
+    protected APIConfiguration|null $api_config;
     protected OpenAI\Client $client;
     public function __construct(APIConfiguration $api_config=NULL)
     {
         $this->api_config = $api_config;
         if ($this->api_config == NULL) {
             try {
-                $this->api_key = new APIConfiguration(config('services.openai.key'));
+                $this->api_config = new APIConfiguration(config('dragonzap.openai.key'));
             } catch (Exception $e) {
                 throw new Exception('If you do not provide a ' . APIConfiguration::class . ' then you must be using this module within Laravel framework. Details:'  . $e->getMessage());
             }
