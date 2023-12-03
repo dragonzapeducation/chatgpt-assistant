@@ -9,11 +9,11 @@ class ChatGptAssistantProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ => config_path('dragonzap.php'),
+            __DIR__.'/config/dragonzap.php' => config_path('dragonzap.php'),
         ], 'config');
     
         $this->mergeConfigFrom(
-            __DIR__ , 'dragonzap'
+            __DIR__.'/config/dragonzap.php', 'dragonzap'
         );
     }
 
