@@ -41,7 +41,19 @@ abstract class Assistant
     public function newConversation() : Conversation
     {
         $response = $this->client->threads()->create([]);
-        return new Conversation($this, $response);
+        return new Conversation($this, $response, null);
+    }
+
+    public function loadConversation(ConversationIdentificationData $conversation_id_data) : Conversation
+    {
+        $thread = $this->client->threads()->retrieve($conversation_id_data->getConversationId());
+        $run = null;
+        $run_id = $conversation_id_data->getRunId();
+        if ($run_id)
+        {
+            $run = $this->client->threads()->runs()->retrieve($thread->id, $run_id);
+        }
+        return new Conversation($this, $thread, $run);
     }
 
     /**

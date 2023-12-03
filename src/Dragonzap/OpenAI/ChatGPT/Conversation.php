@@ -36,14 +36,28 @@ class Conversation
     protected Assistant $assistant;
     protected ThreadResponse $thread;
 
-    protected ThreadRunResponse $current_run;
+    protected ThreadRunResponse|null $current_run;
 
-    public function __construct(Assistant $assistant, ThreadResponse $thread)
+    public function __construct(Assistant $assistant, ThreadResponse $thread, ThreadRunResponse|null $current_run)
     {
         $this->assistant = $assistant;
         $this->thread = $thread;
+        $this->current_run = $current_run;
     }
 
+    /**
+     * @return ConversationIdentificationData Returns an object which identifies the current conversation
+     */
+    public function getIdentificationData() : ConversationIdentificationData
+    {
+        $thread_id = $this->thread->id;
+        $run_id = null;
+        if ($this->current_run)
+        {
+            $run_id = $this->current_run->id;
+        }
+        return new ConversationIdentificationData($thread_id, $run_id);
+    }
 
     public function sendMessage(string $message, string $role = 'user', bool $autorun = true): void
     {
@@ -158,7 +172,7 @@ class Conversation
                 $function_response = json_encode($function_response);
             }
 
-            $tool_outputs[] = ['tool_call_id' => $tool_call_id,  'output' => $function_response];
+            $tool_outputs[] = ['tool_call_id' => $tool_call_id, 'output' => $function_response];
         }
 
         // Now we have called the function and got a response lets pass it back to chatgpt

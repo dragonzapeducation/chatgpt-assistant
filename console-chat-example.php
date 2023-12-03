@@ -2,8 +2,13 @@
 require "vendor/autoload.php";
 use Dragonzap\OpenAI\ChatGPT\APIConfiguration;
 use Dragonzap\OpenAI\ChatGPT\Assistant;
-use Dragonzap\OpenAI\ChatGPT\RunState;
 
+/**
+ * Run the console chat
+ * php ./console-chat-example.php
+ * 
+ * Start typing questions and get answers
+ */
 class JessicaAssistant extends Assistant
 {
 
@@ -12,6 +17,9 @@ class JessicaAssistant extends Assistant
         parent::__construct($api_config);
     }
 
+    /**
+     * You should replace the assistant ID with your own chatgpt assistant id.
+     */
     public function getAssistantId(): string
     {
         return 'asst_0q46BUiesPu5XStGHufJVCba';
@@ -65,6 +73,7 @@ class JessicaAssistant extends Assistant
 
 }
 
+// Replace the API Key with your own chatgpt API key
 $assistant = new JessicaAssistant(new APIConfiguration('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'));
 $conversation = $assistant->newConversation();
 
