@@ -16,7 +16,7 @@ class ChatGptAssistantProvider extends ServiceProvider
             __DIR__.'/config/dragonzap.php', 'dragonzap'
         );
     }
-
+    
     public function register()
     {
         // Code for bindings, if necessary
