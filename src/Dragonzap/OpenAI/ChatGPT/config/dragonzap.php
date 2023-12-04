@@ -2,6 +2,6 @@
 
 return [
     'openai' => [
-        'key' => '1234'
+        'key' => env('OPENAI_CHATGPT_KEY', 'default-key-value')
     ]
 ];
