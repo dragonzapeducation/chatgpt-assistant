@@ -41,7 +41,7 @@ JessicaAssistant will override the `handleFunction()` method which will be calle
         switch($function)
         {
             case 'get_weather':
-                $response = ['success' => true, 'message' => 'We will pretend its a sunny day where ever you live']
+                $response = ['success' => true, 'message' => 'We will pretend its a sunny day where ever you live'];
                 break;
 
             default:
