@@ -53,6 +53,9 @@ class Conversation
         $this->thread = $thread;
         $this->current_run = $current_run;
         $this->response_data = null;
+        if ($this->current_run) {
+            $this->response_data = new ResponseData();
+        }
     }
 
     private function setCurrentRun(ThreadRunResponse|null $current_run)
