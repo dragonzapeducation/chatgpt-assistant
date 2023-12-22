@@ -141,29 +141,7 @@ class Conversation
         return $run_state;
     }
 
-    /**
-     * Retrieves the response from the assistant and then resets the current run.
-     *
-     * @deprecated This method is deprecated and will be removed in version 2.0.0.
-     * Instead, use the getResponseData()->getResponse() method to obtain the response data.
-     * 
-     * @throws IncompleteRunException If the current run's status is not 'completed'.
-     * @return string The response from the assistant.
-     */
-    public function getResponse(): string
-    {
-        if ($this->current_run->status != 'completed') {
-            throw new IncompleteRunException('The status of the job is not yet completed. Run Conversation::getRunState() to refresh the cache of this current run if it returns RunState::COMPLETED you will be able to get a response by calling this function again');
-        }
-
-        $response = $this->assistant->getOpenAIClient()->threads()->messages()->list($this->thread->id, [
-            'limit' => 1,
-        ]);
-
-        $this->setCurrentRun(null);
-        return $response->data[0]->content[0]->text->value;
-    }
-
+  
     /**
      * Retrieves the response data for the current or last run.
      *
