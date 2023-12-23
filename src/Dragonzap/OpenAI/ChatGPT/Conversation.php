@@ -194,7 +194,7 @@ class Conversation
      * Warning: Ideally should only be used in API's or console applications, avoid use if possible as long timeouts
      * disrupt user experience and strain the web server.
      *
-     * @param $timeout_seconds The total seconds we will wait for completion or failrue. Use zero for forever
+     * @param $timeout_seconds The total seconds we will wait for completion or failure. Use zero for forever
      * @throws TimeoutException If we timeout we will throw a Timeout exception.
      * @throws ThreadRunResponseLastError If there is an error with the current run.
      */
