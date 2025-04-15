@@ -11,6 +11,7 @@
 namespace Dragonzap\OpenAI\ChatGPT;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Filesystem\Filesystem;
 
 class ChatGptAssistantProvider extends ServiceProvider
 {
