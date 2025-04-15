@@ -27,7 +27,10 @@ class ChatGptAssistantProvider extends ServiceProvider
     
     public function register()
     {
-        // Code for bindings, if necessary
+        // Explicit binding if required
+        $this->app->singleton('files', function () {
+            return new Filesystem;
+        });
     }
 }
 
