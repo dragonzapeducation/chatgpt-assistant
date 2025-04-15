@@ -23,5 +23,13 @@
         "allow-plugins": {
             "php-http/discovery": true
         }
+    },
+    "extra": {
+    "laravel": {
+        "providers": [
+            "Dragonzap\\OpenAI\\ChatGPT\\ChatGptAssistantProvider"
+        ]
     }
+}
+
 }
