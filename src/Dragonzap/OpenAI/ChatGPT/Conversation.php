@@ -235,6 +235,9 @@ class Conversation
             $tool_call_id = $action_function_tool_call->id;
             $function_name = $action_function_tool_call->function->name;
             $function_arguments = json_decode($action_function_tool_call->function->arguments, true);
+            if (!is_array($function_arguments)) {
+               $function_arguments = [];
+            }
             $function_response = $this->assistant->handleFunction($function_name, $function_arguments);
 
             // Add the function call to the response data
